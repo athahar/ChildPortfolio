@@ -44,6 +44,7 @@ export default function Dashboard() {
       };
       
       await addChild.mutateAsync(formattedValues);
+      setIsAddingChild(false);
       form.reset();
       toast({
         title: "Success",
@@ -76,9 +77,9 @@ export default function Dashboard() {
       <main className="container mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-8">
           <h2 className="text-3xl font-bold">Children Profiles</h2>
-          <Dialog>
+          <Dialog open={isAddingChild} onOpenChange={setIsAddingChild}>
             <DialogTrigger asChild>
-              <Button className="flex items-center">
+              <Button variant="default">
                 <Plus className="mr-2 h-4 w-4" />
                 Add Child
               </Button>
