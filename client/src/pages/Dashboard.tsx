@@ -29,6 +29,7 @@ export default function Dashboard() {
   const { toast } = useToast();
 
   const form = useForm({
+    resolver: zodResolver(insertChildSchema),
     defaultValues: {
       name: "",
       dateOfBirth: new Date().toISOString().split('T')[0],
@@ -37,18 +38,9 @@ export default function Dashboard() {
 
   const onSubmit = async (values: any) => {
     try {
-      if (!values.name) {
-        toast({
-          title: "Error",
-          description: "Name is required",
-          variant: "destructive",
-        });
-        return;
-      }
-
       const formattedValues = {
         name: values.name,
-        dateOfBirth: values.dateOfBirth || null,
+        dateOfBirth: values.dateOfBirth ? new Date(values.dateOfBirth).toISOString() : null,
       };
       
       await addChild.mutateAsync(formattedValues);
