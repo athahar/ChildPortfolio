@@ -38,12 +38,8 @@ export default function Dashboard() {
 
   const onSubmit = async (values: any) => {
     try {
-      const formattedValues = {
-        name: values.name,
-        dateOfBirth: values.dateOfBirth ? new Date(values.dateOfBirth).toISOString() : null,
-      };
-      
-      await addChild.mutateAsync(formattedValues);
+      // The schema will handle the date transformation
+      await addChild.mutateAsync(values);
       setIsAddingChild(false);
       form.reset();
       toast({

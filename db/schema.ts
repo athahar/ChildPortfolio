@@ -51,12 +51,11 @@ export const insertChildSchema = createInsertSchema(children)
   .extend({
     dateOfBirth: z.string().nullable().transform(val => {
       if (!val) return null;
-      // Ensure the date is valid
       const date = new Date(val);
       if (isNaN(date.getTime())) {
         throw new Error("Invalid date format");
       }
-      return date;
+      return date.toISOString();
     }),
   });
 export const selectChildSchema = createSelectSchema(children);
@@ -67,7 +66,7 @@ export const insertAchievementSchema = createInsertSchema(achievements)
       if (isNaN(date.getTime())) {
         throw new Error("Invalid date format");
       }
-      return date;
+      return date.toISOString();
     }),
     mediaUrls: z.array(z.string()).nullable(),
     tags: z.array(z.string()).nullable(),

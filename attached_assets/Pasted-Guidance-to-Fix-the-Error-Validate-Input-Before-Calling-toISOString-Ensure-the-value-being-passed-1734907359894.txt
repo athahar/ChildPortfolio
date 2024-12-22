@@ -1,0 +1,65 @@
+Guidance to Fix the Error
+Validate Input Before Calling toISOString(): Ensure the value being passed is a valid Date object. Add a check or transform the value into a Date object before calling toISOString().
+
+Update the Schema Transformation: In your insertAchievementSchema and insertChildSchema, you're already transforming strings into Date objects. Add a safeguard to ensure the transformation always results in a valid Date:
+
+typescript
+Copy code
+.transform(val => {
+    if (!val) return null;
+    const date = new Date(val);
+    if (isNaN(date.getTime())) {
+        throw new Error("Invalid date format");
+    }
+    return date;
+})
+Fix the Dashboard.tsx Form Submission: Ensure dateOfBirth is properly formatted as a Date object before submitting:
+
+typescript
+Copy code
+const formattedValues = {
+    name: values.name,
+    dateOfBirth: values.dateOfBirth 
+        ? new Date(values.dateOfBirth).toISOString() 
+        : null,
+};
+Update Default Date Handling: When providing a default value for dateOfBirth, ensure it is a valid string in YYYY-MM-DD format:
+
+typescript
+Copy code
+defaultValues: {
+    name: "",
+    dateOfBirth: new Date().toISOString().split('T')[0], // Ensures valid date input format
+},
+Inspect Database Schema for Null Handling: In your database schema, allow null values for timestamp fields like dateOfBirth:
+
+typescript
+Copy code
+dateOfBirth: timestamp("date_of_birth").nullable(),
+Add Logging for Debugging: Temporarily log the value before calling toISOString() to inspect its type and content:
+
+typescript
+Copy code
+console.log("Value received:", value);
+if (!(value instanceof Date)) {
+    throw new Error("Value is not a Date object");
+}
+Error Handling in Backend Logic: Ensure that when inserting data into the database, value.toISOString() is called only on valid Date objects:
+
+typescript
+Copy code
+if (value instanceof Date) {
+    return value.toISOString();
+} else {
+    throw new Error("Invalid date format, expected a Date object.");
+}
+Steps to Debug the Error
+Add a console log in the PgTimestamp.mapToDriverValue method to inspect what value is being passed.
+Check the frontend dateOfBirth field in the form submission to ensure it’s properly formatted.
+Verify that your database schema allows null or valid date values.
+Expected Fix Location
+insertAchievementSchema and insertChildSchema need proper transformations.
+dashboard.tsx needs validation for the dateOfBirth input.
+PgTimestamp.mapToDriverValue should handle non-Date values gracefully.
+Outcome
+After applying these fixes, the app should handle date inputs correctly, whether they are valid Date objects, null, or formatted date strings.
