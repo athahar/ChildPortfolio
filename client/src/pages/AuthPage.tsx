@@ -50,7 +50,21 @@ export default function AuthPage() {
             HypeDoc for Kids
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-4">
+          <div className="flex justify-center space-x-2 mb-4">
+            <Button
+              variant={isLogin ? "default" : "outline"}
+              onClick={() => setIsLogin(true)}
+            >
+              Login
+            </Button>
+            <Button
+              variant={!isLogin ? "default" : "outline"}
+              onClick={() => setIsLogin(false)}
+            >
+              Register
+            </Button>
+          </div>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <FormField
@@ -60,7 +74,7 @@ export default function AuthPage() {
                   <FormItem>
                     <FormLabel>Username</FormLabel>
                     <FormControl>
-                      <Input {...field} />
+                      <Input {...field} placeholder="Enter your username" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -73,7 +87,7 @@ export default function AuthPage() {
                   <FormItem>
                     <FormLabel>Password</FormLabel>
                     <FormControl>
-                      <Input type="password" {...field} />
+                      <Input type="password" {...field} placeholder="Enter your password" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -87,13 +101,6 @@ export default function AuthPage() {
               </Button>
             </form>
           </Form>
-          <Button
-            variant="link"
-            className="mt-4 w-full"
-            onClick={() => setIsLogin(!isLogin)}
-          >
-            {isLogin ? "Need an account? Register" : "Have an account? Login"}
-          </Button>
         </CardContent>
       </Card>
     </div>
