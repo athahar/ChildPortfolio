@@ -29,7 +29,6 @@ export default function Dashboard() {
   const { toast } = useToast();
 
   const form = useForm({
-    resolver: zodResolver(insertChildSchema),
     defaultValues: {
       name: "",
       dateOfBirth: new Date().toISOString().split('T')[0],
@@ -128,7 +127,7 @@ export default function Dashboard() {
                   <Button 
                     type="submit" 
                     className="w-full"
-                    disabled={form.formState.isSubmitting || !form.formState.isValid}
+                    disabled={form.formState.isSubmitting}
                   >
                     {form.formState.isSubmitting ? (
                       <>
