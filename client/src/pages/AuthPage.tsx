@@ -28,15 +28,22 @@ export default function AuthPage() {
       const result = await (isLogin ? login(values) : register(values));
       if (!result.ok) {
         toast({
-          title: "Error",
+          title: isLogin ? "Login Failed" : "Registration Failed",
           description: result.message,
           variant: "destructive",
         });
+        return;
       }
-    } catch (error) {
+      
+      toast({
+        title: isLogin ? "Login Successful" : "Registration Successful",
+        description: isLogin ? "Welcome back!" : "Your account has been created.",
+      });
+    } catch (error: any) {
+      console.error('Auth error:', error);
       toast({
         title: "Error",
-        description: "An unexpected error occurred",
+        description: error.message || "An unexpected error occurred",
         variant: "destructive",
       });
     }
@@ -93,11 +100,20 @@ export default function AuthPage() {
                   </FormItem>
                 )}
               />
-              <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
-                {form.formState.isSubmitting && (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              <Button 
+                type="submit" 
+                className="w-full" 
+                disabled={form.formState.isSubmitting}
+                variant="default"
+              >
+                {form.formState.isSubmitting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    {isLogin ? "Logging in..." : "Creating account..."}
+                  </>
+                ) : (
+                  isLogin ? "Login" : "Create Account"
                 )}
-                {isLogin ? "Login" : "Register"}
               </Button>
             </form>
           </Form>
