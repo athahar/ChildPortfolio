@@ -30,7 +30,12 @@ export default function Dashboard() {
 
   const onSubmit = async (values: any) => {
     try {
-      await addChild.mutateAsync(values);
+      const formattedValues = {
+        ...values,
+        dateOfBirth: values.dateOfBirth ? new Date(values.dateOfBirth).toISOString() : null,
+      };
+      
+      await addChild.mutateAsync(formattedValues);
       setIsAddingChild(false);
       form.reset();
       toast({

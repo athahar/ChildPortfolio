@@ -1,6 +1,7 @@
 import { pgTable, text, serial, timestamp, integer, jsonb } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { relations } from "drizzle-orm";
+import { z } from "zod";
 
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
@@ -46,9 +47,17 @@ export const achievementsRelations = relations(achievements, ({ one }) => ({
 
 export const insertUserSchema = createInsertSchema(users);
 export const selectUserSchema = createSelectSchema(users);
-export const insertChildSchema = createInsertSchema(children);
+export const insertChildSchema = createInsertSchema(children)
+  .extend({
+    dateOfBirth: z.string().nullable().transform(val => val ? new Date(val) : null),
+  });
 export const selectChildSchema = createSelectSchema(children);
-export const insertAchievementSchema = createInsertSchema(achievements);
+export const insertAchievementSchema = createInsertSchema(achievements)
+  .extend({
+    date: z.string().transform(val => new Date(val)),
+    mediaUrls: z.array(z.string()).nullable(),
+    tags: z.array(z.string()).nullable(),
+  });
 export const selectAchievementSchema = createSelectSchema(achievements);
 
 export type User = typeof users.$inferSelect;
