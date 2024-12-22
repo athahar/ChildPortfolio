@@ -49,7 +49,11 @@ export const insertUserSchema = createInsertSchema(users);
 export const selectUserSchema = createSelectSchema(users);
 export const insertChildSchema = createInsertSchema(children)
   .extend({
-    dateOfBirth: z.string().nullable().transform(val => val ? new Date(val) : null),
+    dateOfBirth: z.string().nullable().transform(val => {
+      if (!val) return null;
+      const date = new Date(val);
+      return date.toISOString();
+    }),
   });
 export const selectChildSchema = createSelectSchema(children);
 export const insertAchievementSchema = createInsertSchema(achievements)
