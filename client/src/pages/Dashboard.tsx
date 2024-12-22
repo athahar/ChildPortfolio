@@ -38,9 +38,18 @@ export default function Dashboard() {
 
   const onSubmit = async (values: any) => {
     try {
+      if (!values.name || !values.dateOfBirth) {
+        toast({
+          title: "Error",
+          description: "Please fill in all required fields",
+          variant: "destructive",
+        });
+        return;
+      }
+
       const formattedValues = {
         ...values,
-        dateOfBirth: values.dateOfBirth ? new Date(values.dateOfBirth).toISOString() : null,
+        dateOfBirth: new Date(values.dateOfBirth).toISOString(),
       };
       
       await addChild.mutateAsync(formattedValues);
@@ -89,7 +98,7 @@ export default function Dashboard() {
                 <DialogTitle>Add Child Profile</DialogTitle>
               </DialogHeader>
               <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4" noValidate>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                   <FormField
                     control={form.control}
                     name="name"
@@ -97,7 +106,7 @@ export default function Dashboard() {
                       <FormItem>
                         <FormLabel>Name</FormLabel>
                         <FormControl>
-                          <Input {...field} />
+                          <Input {...field} placeholder="Enter child's name" />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -119,12 +128,16 @@ export default function Dashboard() {
                   <Button 
                     type="submit" 
                     className="w-full"
-                    disabled={form.formState.isSubmitting}
+                    disabled={form.formState.isSubmitting || !form.formState.isValid}
                   >
-                    {form.formState.isSubmitting && (
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    {form.formState.isSubmitting ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Adding Child...
+                      </>
+                    ) : (
+                      "Add Child"
                     )}
-                    Add Child
                   </Button>
                 </form>
               </Form>
