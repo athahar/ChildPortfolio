@@ -48,7 +48,7 @@ export default function Dashboard() {
 
       const formattedValues = {
         ...values,
-        dateOfBirth: new Date(values.dateOfBirth).toISOString(),
+        dateOfBirth: values.dateOfBirth ? new Date(values.dateOfBirth).toISOString() : null,
       };
       
       await addChild.mutateAsync(formattedValues);
