@@ -44,12 +44,28 @@ export function registerRoutes(app: Express): Server {
 
   // File upload endpoint
   app.post("/api/upload", upload.array("files", 5), (req, res) => {
-    if (!req.user) return res.status(401).send("Not authenticated");
+    console.log("[Upload] Request received");
     
-    const files = (req.files as Express.Multer.File[]) || [];
-    const fileUrls = files.map(file => `/uploads/${file.filename}`);
+    if (!req.user) {
+      console.log("[Upload] Authentication failed");
+      return res.status(401).send("Not authenticated");
+    }
     
-    res.json({ urls: fileUrls });
+    try {
+      const files = (req.files as Express.Multer.File[]) || [];
+      console.log(`[Upload] Processing ${files.length} files`);
+      
+      const fileUrls = files.map(file => {
+        console.log(`[Upload] Processed file: ${file.filename}`);
+        return `/uploads/${file.filename}`;
+      });
+      
+      console.log("[Upload] Successfully processed all files");
+      res.json({ urls: fileUrls });
+    } catch (error) {
+      console.error("[Upload] Error processing files:", error);
+      res.status(500).send("Error processing upload");
+    }
   });
 
   // Achievements endpoints

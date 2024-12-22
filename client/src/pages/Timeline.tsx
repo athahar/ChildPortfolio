@@ -52,7 +52,7 @@ export default function Timeline() {
           <div>
             <h2 className="text-3xl font-bold">{child.name}'s Timeline</h2>
             <p className="text-muted-foreground">
-              Born {format(new Date(child.dateOfBirth), "MMMM d, yyyy")}
+              Born {child.dateOfBirth ? format(new Date(child.dateOfBirth), "MMMM d, yyyy") : "Date not set"}
             </p>
           </div>
           <AddAchievementDialog childId={child.id} />
