@@ -17,8 +17,11 @@ export function registerRoutes(app: Express): Server {
   // Serve uploaded files
   app.use("/uploads", express.static("uploads"));
 
+  // API Routes
+  const apiRouter = express.Router();
+
   // Children endpoints
-  app.get("/api/children", async (req, res) => {
+  apiRouter.get("/children", async (req, res) => {
     if (!req.user) return res.status(401).send("Not authenticated");
     
     const userChildren = await db.query.children.findMany({
@@ -30,7 +33,7 @@ export function registerRoutes(app: Express): Server {
     res.json(userChildren);
   });
 
-  app.post("/api/children", async (req, res) => {
+  apiRouter.post("/children", async (req, res) => {
     if (!req.user) return res.status(401).send("Not authenticated");
     
     const child = await db.insert(children)
@@ -43,24 +46,14 @@ export function registerRoutes(app: Express): Server {
   });
 
   // File upload endpoint
-  app.post("/api/upload", upload.array("files", 5), (req, res) => {
-    console.log("[Upload] Request received");
-    
+  apiRouter.post("/upload", upload.array("files", 5), (req, res) => {
     if (!req.user) {
-      console.log("[Upload] Authentication failed");
       return res.status(401).send("Not authenticated");
     }
     
     try {
       const files = (req.files as Express.Multer.File[]) || [];
-      console.log(`[Upload] Processing ${files.length} files`);
-      
-      const fileUrls = files.map(file => {
-        console.log(`[Upload] Processed file: ${file.filename}`);
-        return `/uploads/${file.filename}`;
-      });
-      
-      console.log("[Upload] Successfully processed all files");
+      const fileUrls = files.map(file => `/uploads/${file.filename}`);
       res.json({ urls: fileUrls });
     } catch (error) {
       console.error("[Upload] Error processing files:", error);
@@ -69,7 +62,7 @@ export function registerRoutes(app: Express): Server {
   });
 
   // Achievements endpoints
-  app.get("/api/achievements/:childId", async (req, res) => {
+  apiRouter.get("/achievements/:childId", async (req, res) => {
     if (!req.user) return res.status(401).send("Not authenticated");
     
     const childAchievements = await db.query.achievements.findMany({
@@ -79,7 +72,7 @@ export function registerRoutes(app: Express): Server {
     res.json(childAchievements);
   });
 
-  app.post("/api/achievements", async (req, res) => {
+  apiRouter.post("/achievements", async (req, res) => {
     if (!req.user) return res.status(401).send("Not authenticated");
     
     const achievement = await db.insert(achievements)
@@ -87,6 +80,9 @@ export function registerRoutes(app: Express): Server {
       .returning();
     res.json(achievement[0]);
   });
+
+  // Mount API routes
+  app.use("/api", apiRouter);
 
   const httpServer = createServer(app);
   return httpServer;
