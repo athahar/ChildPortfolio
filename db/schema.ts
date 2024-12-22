@@ -51,7 +51,8 @@ export const insertChildSchema = createInsertSchema(children)
   .extend({
     dateOfBirth: z.string().nullable().transform(val => {
       if (!val) return null;
-      return new Date(val);
+      const date = new Date(val);
+      return date;
     }),
   });
 export const selectChildSchema = createSelectSchema(children);
