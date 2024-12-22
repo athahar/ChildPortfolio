@@ -44,16 +44,16 @@ export default function Dashboard() {
       };
       
       await addChild.mutateAsync(formattedValues);
-      setIsAddingChild(false);
       form.reset();
       toast({
         title: "Success",
         description: "Child profile added successfully",
       });
     } catch (error: any) {
+      console.error('Error adding child:', error);
       toast({
         title: "Error",
-        description: error.message,
+        description: error.message || "Failed to add child profile",
         variant: "destructive",
       });
     }
@@ -76,14 +76,14 @@ export default function Dashboard() {
       <main className="container mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-8">
           <h2 className="text-3xl font-bold">Children Profiles</h2>
-          <Dialog open={isAddingChild} onOpenChange={setIsAddingChild}>
+          <Dialog>
             <DialogTrigger asChild>
-              <Button>
+              <Button className="flex items-center">
                 <Plus className="mr-2 h-4 w-4" />
                 Add Child
               </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
                 <DialogTitle>Add Child Profile</DialogTitle>
               </DialogHeader>
