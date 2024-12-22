@@ -37,10 +37,10 @@ export default function Dashboard() {
 
   const onSubmit = async (values: any) => {
     try {
-      if (!values.name || !values.dateOfBirth) {
+      if (!values.name) {
         toast({
           title: "Error",
-          description: "Please fill in all required fields",
+          description: "Name is required",
           variant: "destructive",
         });
         return;
@@ -48,7 +48,7 @@ export default function Dashboard() {
 
       const formattedValues = {
         name: values.name,
-        dateOfBirth: values.dateOfBirth || null,
+        dateOfBirth: values.dateOfBirth ? new Date(values.dateOfBirth) : null,
       };
       
       await addChild.mutateAsync(formattedValues);
